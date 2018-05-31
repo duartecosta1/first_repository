@@ -46,7 +46,7 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
             print exp
 
 
-            root_path = /g/data3/w97/dc8106/AMZ_def_EXPs/exp
+            root_path = '/g/data3/w97/dc8106/AMZ_def_EXPs/exp'
 
 
 #Source functions
@@ -132,16 +132,15 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
             fh = Dataset(tasmax_file[0], mode='r')
 
     #Get lat and lon
+            try:
+                lat = fh.variables['latitude'][:]
+                lon = fh.variables['longitude'][:]
+            except:
                 try:
-                    lat = fh.variables['latitude'][:]
-                    lon = fh.variables['longitude'][:]
-                except:
-                    try:
-                        lat = fh.variables['northing'][:]
-                        lon = fh.variables['easting'][:]
-                    except:
-                        lat = fh.variables['lat'][:]
-                        lon = fh.variables['lon'][:]
+                    lat = fh.variables['northing'][:]
+                    lon = fh.variables['easting'][:]
+                    lat = fh.variables['lat'][:]
+                    lon = fh.variables['lon'][:]
 
 
 
@@ -160,23 +159,12 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
 
 
 
-    #Initialise output matrices for other variables
-    #The function creates extra variables if using lags,
-    #need to take this into account
-    #Not a fan of this as code will fail if function changes...
-    #But can't think of a better way right now
-    
-    #Set output variables, other vars first so can create lagged vars
-    #out_vars = other_vars
-    
-    #Then add extra lagged variables that code creates
-    #for v in range(len(out_vars)):
-        #for l in range(len(lags)):
+      
+ :
         
             #lag_varname = out_vars[v] + '_lag' + str(lags[l])
             #out_vars = np.append(out_vars, lag_varname)
-    
-    
+      
     #Add hot day index variable
     #out_vars = np.append(out_vars, 'hot_day_ind')
     
@@ -185,16 +173,15 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
     #as tasmax_tseries)
     #out_vars = np.append(out_vars, tasmax_name)
 
-
 	#Initialise output arrays (days, days, lat, lon)
     #The number of days above the percentile will vary by grid cells
     #Set it to twice the number of days expected based on percentile to
     #be on the safe side 
     #e.g. if percentile 97.5, expect 365 * 0.025 days (~9 days per year)
-            no_days = int(365 * ((100 - percentile) / 100) * 2) + 1
+                no_days = int(365 * ((100 - percentile) / 100) * 2) + 1
 
     #Initialise dictionary for output data
-             out_data = {}
+            out_data = {}
     
     #for v in range(len(out_vars)):
         
@@ -204,7 +191,7 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
 
    
 	### Loop through years ###
-            for year in np.arange(start_yr, end_yr+1):
+        for year in np.arange(start_yr, end_yr+1):
 
 
         ### tasmax ###
