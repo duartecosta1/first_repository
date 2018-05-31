@@ -24,7 +24,7 @@ cdo = Cdo()
 
 ### Set paths ###
 
-for expname in ('242GP', 'allAMZ', 'CTL')
+for expname in ('242GP', 'allAMZ', 'CTL'):
 #001GP 009GP 025GP 081GP 121GP                                                                                                                                                                   
 
     print expname                                                                                                                                                                                                
