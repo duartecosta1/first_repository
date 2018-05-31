@@ -33,10 +33,10 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
 #242GP allAMZ CTL                                                                                                                                                                                           
 #do echo $def2
 
-        for coup in ('sc' 'wc')                                                                                                                                                                                         
+    for coup in ('sc', 'wc'):                                                                                                                                                                                         
         print coup                                                                                                                                                                                              
 
-            for ens in range(0, 5)
+        for ens in range(0, 5):
             print ens
 
             exp = expnamecoup+'_E'+ens
