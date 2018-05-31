@@ -24,8 +24,10 @@ cdo = Cdo()
 
 ### Set paths ###
 
-for expname in ('242GP', 'allAMZ', 'CTL'):
-#001GP 009GP 025GP 081GP 121GP                                                                                                                                                                   
+for expname in ['001GP']:
+#, '009GP', '025GP', '081GP', '121GP')                                                                                                                                                              
+#'242GP', 'allAMZ', 'CTL'):
+#
 
     print expname                                                                                                                                                                                                
 
@@ -33,27 +35,28 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
 #242GP allAMZ CTL                                                                                                                                                                                           
 #do echo $def2
 
-    for coup in ('sc', 'wc'):                                                                                                                                                                                         
+    for coup in ['sc']:
+                 # 'wc'):                                                                                                                                                                                  
         print coup                                                                                                                                                                                              
 
         for ens in range(0, 5):
             print ens
 
-            exp = expnamecoup+'_E'+ens
+            exp = expname+coup+'_E'+str(ens)
             #$def$coup'_E'$ens
             
             #$coup                                                                                                                                                                                                      
             print exp
 
 
-            root_path = '/g/data3/w97/dc8106/AMZ_def_EXPs/exp'
+            root_path = '/g/data3/w97/dc8106/AMZ_def_EXPs/'+exp
 
 
 #Source functions
             #lib_path  = root_path + '/../scripts/Python/functions'
 
             #sys.path.append(os.path.abspath(lib_path))
-            #from find_days_above_percentile import *
+            from find_days_above_percentile import *
 
 
 
@@ -126,10 +129,11 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
     #print 'Processing', models[m]
 
     #Find model file for day of Txx
-            tasmax_file = glob.glob(root_path + "/tasmax_sc-only_1978-2011_"+exp+".nc")
+            tasmax_file = (root_path+'/tasmax_sc-only_1978-2011_'+exp+'.nc')
+    #glob.glob(root_path + "/tasmax_sc-only_1978-2011_"+exp+".nc")
 
     #Read lon and lat to set up output array
-            fh = Dataset(tasmax_file[0], mode='r')
+            fh = Dataset(tasmax_file, mode='r')
 
     #Get lat and lon
             try:
@@ -139,54 +143,45 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
                 try:
                     lat = fh.variables['northing'][:]
                     lon = fh.variables['easting'][:]
+                except:
                     lat = fh.variables['lat'][:]
                     lon = fh.variables['lon'][:]
-
-
 
     ### Load other variables ###
 
     #Initialise empty character string for file names
     #other_files = ["" for x in range(len(other_vars))]
 
-
     #Find files for other variables
     #for v in range(len(other_vars)):
         
         #Find model file for time series
         #other_files[v] = glob.glob(root_path + "/" + other_vars[v] + 
-                                   #"/" + models[m] +  "/*regrid*.nc")[0]
-
-
-
-      
- :
-        
+       #"/" + models[m] +  "/*regrid*.nc")[0
             #lag_varname = out_vars[v] + '_lag' + str(lags[l])
             #out_vars = np.append(out_vars, lag_varname)
       
     #Add hot day index variable
-    #out_vars = np.append(out_vars, 'hot_day_ind')
-    
-    
+            #out_vars = np.append(out_vars, 'hot_day_ind')
+        
     #Then add tasmax variable (changed code so already gets added above
     #as tasmax_tseries)
-    #out_vars = np.append(out_vars, tasmax_name)
+            out_vars = ['tasmax']
 
 	#Initialise output arrays (days, days, lat, lon)
     #The number of days above the percentile will vary by grid cells
     #Set it to twice the number of days expected based on percentile to
     #be on the safe side 
     #e.g. if percentile 97.5, expect 365 * 0.025 days (~9 days per year)
-                no_days = int(365 * ((100 - percentile) / 100) * 2) + 1
+            no_days = int(365 * ((100 - percentile) / 100) * 2) + 1
 
     #Initialise dictionary for output data
             out_data = {}
     
-    #for v in range(len(out_vars)):
+    for v in range(len(out_vars)):
         
-        #out_data[out_vars[v]] =  np.zeros((no_yrs * no_days, 
-                                           #len(lat), len(lon))) + miss_val
+        out_data[out_vars[v]] =  np.zeros((no_yrs * no_days, 
+                                           len(lat), len(lon))) + miss_val
 
 
    
@@ -197,10 +192,11 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
         ### tasmax ###
         
  	    #Extract year
-    	   tasmax_yr = cdo.selyear(year, input=tasmax_file[0], returnArray=tasmax_name)
-
+            tasmax_yr1 = cdo.selyear(year, input=tasmax_file, returnArray=tasmax_name)
+            #Convert to Celsius
+            tasmax_yr = tasmax_yr1 - 272.15
 		#Mask
-    	   tasmax_yr[tasmax_yr.mask==True] = miss_val
+                #tasmax_yr[tasmax_yr.mask==True] = miss_val
 
         
         ### Other variables ###
@@ -211,7 +207,7 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
             
             #Get data
             #var_data = cdo.selyear(year, input=other_files[v], 
-                                   returnArray=other_names[v])
+                                     #returnArray=other_names[v])
             
             #Mask 
             #var_data[var_data.mask == True] = miss_val
@@ -223,12 +219,12 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
 
     	### Find tasmax days ###
 
-                    for i in range(len(lat)):
+            for i in range(len(lat)):
 
-                        for j in range(len(lon)):
+               for j in range(len(lon)):
 
         		#Extract data if cell not missing
-            	           if all(tasmax_yr[:,i,j] != miss_val) :
+                   if all(tasmax_yr[:,i,j] != miss_val) :
 
 
                     #Extract grid cell for other vars (needs to be a dictionary)                            
@@ -266,51 +262,50 @@ for expname in ('242GP', 'allAMZ', 'CTL'):
     ##############################
 
     #Create output path and filename
-                out_path = (root_path + "/" + exp)
+    out_path = (root_path + "/" + exp)
 
 
-                if not os.path.exists(out_path):
-    	           os.makedirs(out_path)
+    if not os.path.exists(out_path):
+        os.makedirs(out_path)
 
-                out_file = (out_path + "/" + "_DATES_tasmax_sc-only_1978-2011_" + exp + ".nc")
+    out_file = (out_path + "/" + "_DATES_tasmax_sc-only_1978-2011_" + exp + ".nc")
 
 
     # open a new netCDF file for writing.
-                ncfile = Dataset(out_file,'w', format="NETCDF4_CLASSIC")
+    ncfile = Dataset(out_file,'w', format="NETCDF4_CLASSIC")
     # create the output data.
 
     # create the x, y and time dimensions
-                ncfile.createDimension('lat', lat.shape[0])
-                ncfile.createDimension('lon', lon.shape[0])
-                ncfile.createDimension('days', out_data[v].shape[0])
+    ncfile.createDimension('lat', lat.shape[0])
+    ncfile.createDimension('lon', lon.shape[0])
+    ncfile.createDimension('days', out_data[v].shape[0])
 
 
     # create variables
     # first argument is name of variable, second is datatype, third is
     # a tuple with the names of dimensions.
 
-                longitude = ncfile.createVariable("lon",  'f8', ('lon',))
-                latitude  = ncfile.createVariable("lat",  'f8', ('lat',))
-                day       = ncfile.createVariable("days",'i4', ('days',))
+    longitude = ncfile.createVariable("lon",  'f8', ('lon',))
+    latitude  = ncfile.createVariable("lat",  'f8', ('lat',))
+    day = ncfile.createVariable("days",'i4', ('days',))
 
 
-                nc_out_data = {}
-                for v in out_data:
-                    nc_out_data[v] = ncfile.createVariable(v, 'f8',
-                                    ('days', 'lat','lon'), fill_value=miss_val)
+    nc_out_data = {}
+    for v in out_data:
+        nc_out_data[v] = ncfile.createVariable(v, 'f8', ('days', 'lat','lon'), fill_value=miss_val)
 
 
     #Set variable information
-                longitude.units = 'degrees_east'
-                latitude.units = 'degrees_north'
+    longitude.units = 'degrees_east'
+    latitude.units = 'degrees_north'
 
     #data.long_name = (varname[v] + ' lagged from day Txx occurs')
 
 
     # write data to variable.
-                longitude[:]= lon
-                latitude[:] = lat
-                day[:]      = range(1, no_yrs * no_days + 1)
+    longitude[:]= lon
+    latitude[:] = lat
+    day[:]      = range(1, no_yrs * no_days + 1)
 
     for v in nc_out_data:
         nc_out_data[v][:,:,:] = out_data[v]
