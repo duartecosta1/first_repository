@@ -16,6 +16,9 @@ import glob
 import sys
 import os
 
+#before running the script from the terminal it is necessary to run the following line for python to find cdo:
+								#export CDO=$(which cdo) 
+
 from cdo import *
 
 cdo = Cdo()
