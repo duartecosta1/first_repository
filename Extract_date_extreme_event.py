@@ -25,6 +25,77 @@ cdo = Cdo()
 
 
 
+#Source functions
+            #lib_path  = root_path + '/../scripts/Python/functions'
+
+            #sys.path.append(os.path.abspath(lib_path))
+from find_days_above_percentile import *
+
+
+
+###############################
+### Set years and variables ###
+###############################
+
+
+### Set variables ###
+
+### 1. Temperature variable (daily tasmax) ###
+
+#Variable path
+#tasmax_var  = "tasmax_tseries"
+
+#Variable name in netcdf file
+tasmax_name = "tasmax"
+
+
+### 2. Other variables ###
+
+# saved on the day hot extreme occurs
+# Variable paths
+#other_vars  = ["hfls_tseries", "hfss_tseries", "pr_tseries", "tasmax_tseries"]
+
+#Variable names in Netcdf file
+other_names = []
+	#"hfls", "hfss", "pr", "tasmax"]
+
+
+### Set percentile ###
+
+#code finds days above or equal to this percentile
+percentile = 100
+
+
+### Set years ###
+start_yr= 1978
+end_yr  = 2011
+
+
+#Number of days to average prior to Txx day
+#If don't want lagged variables, set to float('nan')
+lags = [3,5,7,10]
+
+
+#---------------------------------------------------
+
+#Other options
+no_yrs = len(range(start_yr, end_yr+1))
+
+#Define missing values
+miss_val = -9999
+
+
+
+
+##################
+### Load files ###
+##################
+
+
+#Find models
+#models = os.listdir(root_path + "/" + tasmax_var)
+
+
 ### Set paths ###
 
 for expname in ['001GP']:
@@ -54,75 +125,6 @@ for expname in ['001GP']:
 
             root_path = '/g/data3/w97/dc8106/AMZ_def_EXPs/'+exp
 
-
-#Source functions
-            #lib_path  = root_path + '/../scripts/Python/functions'
-
-            #sys.path.append(os.path.abspath(lib_path))
-            from find_days_above_percentile import *
-
-
-
-###############################
-### Set years and variables ###
-###############################
-
-
-### Set variables ###
-
-### 1. Temperature variable (daily tasmax) ###
-
-#Variable path
-#tasmax_var  = "tasmax_tseries"
-
-#Variable name in netcdf file
-            tasmax_name = "tasmax"
-
-
-### 2. Other variables ###
-
-# saved on the day hot extreme occurs
-# Variable paths
-#other_vars  = ["hfls_tseries", "hfss_tseries", "pr_tseries", "tasmax_tseries"]
-
-#Variable names in Netcdf file
-#other_names = ["hfls", "hfss", "pr", "tasmax"]
-
-
-### Set percentile ###
-
-#code finds days above or equal to this percentile
-            percentile = 100
-
-
-### Set years ###
-            start_yr= 1978
-            end_yr  = 2011
-
-
-#Number of days to average prior to Txx day
-#If don't want lagged variables, set to float('nan')
-            lags = [3,5,7,10]
-
-
-#---------------------------------------------------
-
-#Other options
-            no_yrs = len(range(start_yr, end_yr+1))
-
-#Define missing values
-            miss_val = -9999
-
-
-
-
-##################
-### Load files ###
-##################
-
-
-#Find models
-#models = os.listdir(root_path + "/" + tasmax_var)
 
 
 #Loop through models
@@ -165,11 +167,11 @@ for expname in ['001GP']:
             #out_vars = np.append(out_vars, lag_varname)
       
     #Add hot day index variable
-            #out_vars = np.append(out_vars, 'hot_day_ind')
+            out_vars = np.append(out_vars, 'hot_day_ind')
         
     #Then add tasmax variable (changed code so already gets added above
     #as tasmax_tseries)
-            out_vars = ['tasmax']
+            out_vars = other_names
 
 	#Initialise output arrays (days, days, lat, lon)
     #The number of days above the percentile will vary by grid cells
