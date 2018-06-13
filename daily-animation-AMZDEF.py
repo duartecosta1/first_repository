@@ -42,7 +42,7 @@ list_indices = ('tasmax')
 
 # Open Data Files which list the filesnames to be processed
 #files = sorted(glob.glob('/g/data3/w97/dc8106/AMZ_def_EXPs/121GPsc_E0/'AMZDEF.daily_tasmin.tasmax.pr.1978_2011_121GPsc_E0.nc')
-f = open('/g/data3/w97/dc8106/AMZ_def_EXPs/121GPsc_E0/'AMZDEF.daily_tasmin.tasmax.pr.1978_2011_121GPsc_E0.nc', 'r')
+f = open('/g/data3/w97/dc8106/AMZ_def_EXPs/121GPsc_E0/AMZDEF.daily_tasmin.tasmax.pr.1978_2011_121GPsc_E0.nc', 'r')
 
 # ims is a list of lists, each row is a list of artists to draw in the
 # current frame; here we are animating two artists, the contour and a annotations (title) in each frame
