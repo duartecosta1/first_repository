@@ -49,7 +49,7 @@ f = open('/g/data3/w97/dc8106/AMZ_def_EXPs/121GPsc_E0/AMZDEF.daily_tasmin.tasmax
 ims = []
 # read each data file in the list
 for line in f:
-    filename = line.strip()
+    filename = line.strip(AMZDEF.daily_tasmin.tasmax.pr.1978_2011_121GPsc_E0.nc)
     ncin = Dataset(filename, 'r')
     lon = ncin.variables['lon'][:]
     lat = ncin.variables['lat'][:]
