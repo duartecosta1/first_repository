@@ -26,6 +26,7 @@ path = '/g/data3/w97/dc8106/WRF_runs/Era-Interim/VALIDATION/'
 #'_DIFF_TO_'+forc[0]+'_1day-only.nc'
 #'/T2_diff_sept2012_rightint.nc'
 
+#Input data
 
 wrf = 'wrfout_d01_2012-08-27_00_1day_valtest.nc'
 #'wrfout_d01_2012-08-27_00:00:00'
@@ -36,13 +37,15 @@ w = xr.open_dataset(wrf)
 o = xr.open_dataset(met)
 #dif = xr.open_dataset(diff)
 
-#T2
+#T2 - Temperature at 2m
 #wT2 = w.T2[20:].squeeze()
 #wvar = w.PSFC
 wvar = w.T2
 #ovar = o.tas
 ovar = o.TT[:,0,:,:]
 diff = wvar
+
+#Difference between model and observations
 diff[:] = wvar.values - ovar.values
 dvar = diff
 #wvar = wvar.rename({'XTIME': 'Times'})
